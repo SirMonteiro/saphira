@@ -9,8 +9,6 @@ Bem-vindo ao projeto **Saphira API**, uma API desenvolvida com Django Rest Frame
 - [Configuração](#configuração)
 - [Uso](#uso)
 - [Endpoints](#endpoints)
-- [Contribuição](#contribuição)
-- [Licença](#licença)
 
 ## Recursos
 
