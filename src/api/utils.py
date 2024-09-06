@@ -6,7 +6,7 @@ from .models import Student
 
 datetime_url_format = "%Y-%m-%dT%H:%M"
 
-def generate_unique_code(length=4):
+def generate_unique_code(length=3):
     characters = string.ascii_uppercase + string.digits
     while True:
         code = ''.join(random.choices(characters, k=length))
