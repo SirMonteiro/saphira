@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework',
     'api',
+    'corsheaders',
 ]
 
 REST_FRAMEWORK = {
@@ -90,21 +91,38 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
 # Configurações básicas de cookies
 SESSION_COOKIE_NAME = 'sessionid'
+
+SESSION_COOKIE_DOMAIN = '.semanadesi.com' if ENV == 'PRODUCTION' else None
 SESSION_COOKIE_SECURE = True  # Use True se estiver usando HTTPS
-SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_HTTPONLY = False
 SESSION_COOKIE_SAMESITE = 'None'  # Necessário quando front e API estão em (sub)domínios diferentes 
 
+CSRF_COOKIE_DOMAIN = '.semanadesi.com' if ENV == 'PRODUCTION' else None
 CSRF_COOKIE_SECURE = True  # Para proteger o CSRF token via HTTPS
 CSRF_COOKIE_HTTPONLY = False  # Não deve ser HttpOnly para funcionar com JavaScript
-CSRF_COOKIE_SAMESITE = 'None' #'Lax'  # Ou 'Strict'
+CSRF_USE_SESSIONS = False
 
-# Como os domínios são diferentes, é necessário permitir o envio de cookies
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    "https://co-dashboard.semanadesi.com.br",
+CSRF_COOKIE_SAMESITE = 'None' #'Lax'  # Ou 'Strict'
+CSRF_TRUSTED_ORIGINS = [
+    "https://semanadesi.com",
+    "https://saphira.semanadesi.com",
+    "https://co-dashboard.semanadesi.com",
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
 ]
 
+# Como os domínios são diferentes, é necessário permitir o envio de cookies
+CORS_ALLOWED_ORIGINS = [
+    "https://semanadesi.com",
+    "https://saphira.semanadesi.com",
+    "https://co-dashboard.semanadesi.com",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+CORS_ALLOW_CREDENTIALS = True
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

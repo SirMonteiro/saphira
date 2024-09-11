@@ -87,5 +87,5 @@ def admin_auth_required(view_func):
     def _wrapped_view(request, *args, **kwargs):
         if request.user and request.user.is_authenticated and request.user.is_staff:
             return view_func(request, *args, **kwargs)
-        return Response({'detail': 'Acesso exclusivo da CO-SSI.'}, status=status.HTTP_403_FORBIDDEN)
+        return JsonResponse({'detail': 'Acesso exclusivo da CO-SSI.'}, status=403)
     return _wrapped_view

@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from django.contrib.auth import authenticate, login
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import authenticate, login, logout
 from django.db.models import F
 from django.http import Http404, JsonResponse
 from django.utils.decorators import method_decorator
@@ -33,7 +34,7 @@ class AdminLoginView(APIView):
 
         user = authenticate(username=username, password=password)
         if user is not None:
-            login(request, user) # Cria a sessão (define o cookie 'sessionid' no navegador)
+            login(request, user)
 
             return Response({'detail': 'Logado como admin...utilize seus poderes com moderação ;)'}, status=status.HTTP_200_OK)
         else:
@@ -50,6 +51,7 @@ class AdminLogoutView(APIView):
     def post(self, request):
         if not request.user.is_authenticated:
             return Response({'message': 'Você não está logado como admin.'}, status=status.HTTP_401_UNAUTHORIZED)
+        logout(request)
         response = Response({'message': 'Parabéns, agora você não é mais admin :('}, status=status.HTTP_200_OK)
         response.delete_cookie('sessionid')
         return response
