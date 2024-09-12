@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime as dt, timedelta
 from zoneinfo import ZoneInfo
 
 from django.views.decorators.csrf import csrf_exempt
@@ -182,7 +182,7 @@ class CreateStudentOnlinePresenceView(generics.CreateAPIView):
 
         duration = timedelta(minutes=token.duration)
 
-        now = datetime.now(ZoneInfo('America/Sao_Paulo')) # Horário de Brasília
+        now = dt.now(ZoneInfo('America/Sao_Paulo')) # Horário de Brasília
         begin = token.begin
         end = begin + duration
 
