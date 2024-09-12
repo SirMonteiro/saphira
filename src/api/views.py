@@ -83,7 +83,7 @@ class StudentLogin(APIView):
             access_token = refresh.access_token
 
             return Response({
-                'íd': student.id,
+                'id': student.id,
                 'access': str(access_token),
                 'refresh': str(refresh),
             }, status=status.HTTP_200_OK)
