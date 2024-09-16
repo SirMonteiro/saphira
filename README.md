@@ -36,7 +36,7 @@ A API Saphira oferece os seguintes recursos:
 
     ```bash
     git clone https://github.com/SSI-Site/Saphira.git
-    cd Saphira
+    cd saphira/src
     ```
 
 2. **Crie um ambiente virtual e ative-o**:
