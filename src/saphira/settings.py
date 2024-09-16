@@ -42,8 +42,26 @@ else:
     print('Choose between DEBUG and PRODUCTION')
     exit(1)
 
-ALLOWED_HOSTS = getenv('SAPHIRA_ALLOWED_HOSTS', '').split(',')
-
+if ENV == 'PRODUCTION':
+    ALLOWED_HOSTS = [
+        'semanadesi.com',
+        'www.semanadesi.com',
+        'co-dashboard.semanadesi.com',
+        'www.co-dashboard.semanadesi.com',
+        'saphira.semanadesi.com',
+        'www.saphira.semanadesi.com',
+    ]
+else:
+    ALLOWED_HOSTS = [
+        'localhost',
+        '127.0.0.1',
+        'semanadesi.com',
+        'www.semanadesi.com',
+        'co-dashboard.semanadesi.com',
+        'www.co-dashboard.semanadesi.com',
+        'saphira.semanadesi.com',
+        'www.saphira.semanadesi.com',
+    ]
 
 # Application definition
 INSTALLED_APPS = [
@@ -69,7 +87,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication', # Para autenticação de admin com cookies
    ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',  # Por padrão, todas as rotas são públicas
+        'rest_framework.permissions.AllowAny', # Por padrão, todas as rotas são públicas
     ],
 }
 
@@ -93,32 +111,46 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 SESSION_COOKIE_NAME = 'sessionid'
 
 SESSION_COOKIE_DOMAIN = '.semanadesi.com' if ENV == 'PRODUCTION' else None
-SESSION_COOKIE_SECURE = True  # Use True se estiver usando HTTPS
+SESSION_COOKIE_SECURE = True # Use True se estiver usando HTTPS
 SESSION_COOKIE_HTTPONLY = False
-SESSION_COOKIE_SAMESITE = 'None'  # Necessário quando front e API estão em (sub)domínios diferentes 
+SESSION_COOKIE_SAMESITE = 'None' # Necessário quando front e API estão em (sub)domínios diferentes
 
 CSRF_COOKIE_DOMAIN = '.semanadesi.com' if ENV == 'PRODUCTION' else None
-CSRF_COOKIE_SECURE = True  # Para proteger o CSRF token via HTTPS
-CSRF_COOKIE_HTTPONLY = False  # Não deve ser HttpOnly para funcionar com JavaScript
+CSRF_COOKIE_SECURE = True # Para proteger o CSRF token via HTTPS
+CSRF_COOKIE_HTTPONLY = False # Não deve ser HttpOnly para funcionar com JavaScript
 CSRF_USE_SESSIONS = False
 
-CSRF_COOKIE_SAMESITE = 'None' #'Lax'  # Ou 'Strict'
-CSRF_TRUSTED_ORIGINS = [
-    "https://semanadesi.com",
-    "https://saphira.semanadesi.com",
-    "https://co-dashboard.semanadesi.com",
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-]
+CSRF_COOKIE_SAMESITE = 'None' #'Lax' ou 'Strict'
+if ENV == 'PRODUCTION':
+    CSRF_TRUSTED_ORIGINS = [
+        "https://semanadesi.com",
+        "https://saphira.semanadesi.com",
+        "https://co-dashboard.semanadesi.com",
+    ]
+else:
+    CSRF_TRUSTED_ORIGINS = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://semanadesi.com",
+        "https://saphira.semanadesi.com",
+        "https://co-dashboard.semanadesi.com",
+    ]
 
 # Como os domínios são diferentes, é necessário permitir o envio de cookies
-CORS_ALLOWED_ORIGINS = [
-    "https://semanadesi.com",
-    "https://saphira.semanadesi.com",
-    "https://co-dashboard.semanadesi.com",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-]
+if ENV == 'PRODUCTION':
+    CORS_ALLOWED_ORIGINS = [
+        "https://semanadesi.com",
+        "https://saphira.semanadesi.com",
+        "https://co-dashboard.semanadesi.com",
+    ]
+else:
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://semanadesi.com",
+        "https://saphira.semanadesi.com",
+        "https://co-dashboard.semanadesi.com",
+    ]
 CORS_ALLOW_CREDENTIALS = True
 
 MIDDLEWARE = [
