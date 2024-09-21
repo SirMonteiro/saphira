@@ -220,3 +220,8 @@ A API pode ser acessada localmente em `http://localhost:8000/`. Utilize ferramen
 
 - `DELETE /admin/presence/{talk_id}/{student_document}`
   - **Descrição**: Remove uma presença específica.
+  
+  
+  
+  # AWS
+  teste
