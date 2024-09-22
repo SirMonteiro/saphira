@@ -224,4 +224,42 @@ A API pode ser acessada localmente em `http://localhost:8000/`. Utilize ferramen
   
   
   # AWS
-  teste
+  Para a operação e gerenciamento do banco de dados, será utilizado o `AWS` (Amazon Web Services). AWS é uma plataforma de serviços de computação em nuvem oferecida pela Amazon, fornecendo serviços como armazenamento, banco de dados, inteligência artificial, etc. Para tanto, serão utilizados dois principais serviços: 
+    -  [RDS](#RDS)
+    -  [EC2](#EC2)
+      
+  ## RDS
+  
+    O RDS (Relational Database Service) permite o **gerenciamento de banco de dados relacionais**. 
+
+    Nele será criado um banco de dados PostgreSQL. E após a sua criação (nome, tamanho, master username, etc.), será necessário configurar o seu acesso. Para isso:
+  * Guarde as informações importantes, como o endpoint e a porta do banco de dados,
+  * Configure o Grupo de Segurança, verificando se permite conexões com o Django, adicionando o IP público do EC2 e adicionando regras de entrada que permitem conexões TCP para a porta 5432 (porta padrão).
+
+  Além disso, instale o pacote `psycopg2` (ou psycopg2-binary em casos de erro), pois permitirá que o Django possa se conectar ao PostgreSQL.
+  ```sh
+  pip install psycopg2
+  ```
+  ```sh
+  pip install psycopg2-binary
+  ```
+
+    Por fim, configure o Django para se conectar com o banco de dados. Por padrão, os projetos do Django utilizam o banco de dados **SQLite**, portanto, primeiramente, será necessário mudar as configuração presentes no arquivo `settings.py`, substituindo as configurações do banco SQLite pelo PostgreSQL.
+   ```bash
+  DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'my_django_db',  # O nome do banco de dados 
+        'USER': 'admin',  # O usuário master 
+        'PASSWORD': 'sua_senha',  # A senha 
+        'HOST': 'seu-endpoint-do-rds.rds.amazonaws.com',  # O endpoint do RDS
+        'PORT': '5432',  # A porta padrão do PostgreSQL
+      }
+  }
+  ```
+    Depois disso, execute as migrações para criar as tabelas no banco de dados, e verifique se o Django conseguiu se conectar corretamente à ele.
+  ```bash
+  python manage.py migrate
+  ```
+
+  ## EC2
