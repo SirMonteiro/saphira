@@ -9,6 +9,7 @@ Bem-vindo ao projeto **Saphira API**, uma API desenvolvida com Django Rest Frame
 - [Configuração](#configuração)
 - [Uso](#uso)
 - [Endpoints](#endpoints)
+- [AWS](#aws)
 
 ## Recursos
 
@@ -223,43 +224,86 @@ A API pode ser acessada localmente em `http://localhost:8000/`. Utilize ferramen
   
   
   
-  # AWS
-  Para a operação e gerenciamento do banco de dados, será utilizado o `AWS` (Amazon Web Services). AWS é uma plataforma de serviços de computação em nuvem oferecida pela Amazon, fornecendo serviços como armazenamento, banco de dados, inteligência artificial, etc. Para tanto, serão utilizados dois principais serviços: 
-    -  [RDS](#RDS)
-    -  [EC2](#EC2)
-      
-  ## RDS
+## AWS
+Para a operação e gerenciamento do banco de dados, será utilizado o `AWS` (Amazon Web Services). AWS é uma plataforma de serviços de computação em nuvem oferecida pela Amazon, fornecendo serviços em diferentes áreas, como computação, armazenamento, redes e segurança. Para tanto, serão utilizados dois principais serviços: 
+-  [RDS](#RDS)
+-  [EC2](#EC2)
   
-    O RDS (Relational Database Service) permite o **gerenciamento de banco de dados relacionais**. 
+### RDS
 
-    Nele será criado um banco de dados PostgreSQL. E após a sua criação (nome, tamanho, master username, etc.), será necessário configurar o seu acesso. Para isso:
-  * Guarde as informações importantes, como o endpoint e a porta do banco de dados,
-  * Configure o Grupo de Segurança, verificando se permite conexões com o Django, adicionando o IP público do EC2 e adicionando regras de entrada que permitem conexões TCP para a porta 5432 (porta padrão).
+O **RDS** (Relational Database Service) permite o **gerenciamento de banco de dados relacionais**. 
 
-  Além disso, instale o pacote `psycopg2` (ou psycopg2-binary em casos de erro), pois permitirá que o Django possa se conectar ao PostgreSQL.
-  ```sh
-  pip install psycopg2
-  ```
-  ```sh
-  pip install psycopg2-binary
-  ```
+Nele será criado um banco de dados PostgreSQL. E após a sua criação (nome, tamanho, master username, etc.), será necessário configurar o seu acesso. Para isso:
+* Guarde as informações importantes, como o endpoint e a porta do banco de dados,
+* Configure o Grupo de Segurança, verificando se permite conexões com o Django: adicione o IP público do EC2 e regras de entrada que permitem conexões TCP para a porta `5432` (porta padrão).
 
-    Por fim, configure o Django para se conectar com o banco de dados. Por padrão, os projetos do Django utilizam o banco de dados **SQLite**, portanto, primeiramente, será necessário mudar as configuração presentes no arquivo `settings.py`, substituindo as configurações do banco SQLite pelo PostgreSQL.
-   ```bash
-  DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'my_django_db',  # O nome do banco de dados 
-        'USER': 'admin',  # O usuário master 
-        'PASSWORD': 'sua_senha',  # A senha 
-        'HOST': 'seu-endpoint-do-rds.rds.amazonaws.com',  # O endpoint do RDS
-        'PORT': '5432',  # A porta padrão do PostgreSQL
-      }
+> [!NOTE]
+>  Ex:
+> 
+>  Na seção de regras de entrada (Inbound Rules) do grupo de segurança, adicione uma nova regra:
+> 
+> - Tipo: `PostgreSQL` (ou Custom TCP Rule, se você não encontrar o tipo).
+> - Protocolo: `TCP`.
+> - Porta: `5432` (ou a porta que você configurou para o PostgreSQL).
+> - Origem: `IP público da instância EC2` ou `Grupo de Segurança da EC2`
+
+Além disso, instale o pacote `psycopg2` (ou psycopg2-binary em casos de erro), pois permitirá que o Django possa se conectar ao PostgreSQL.
+```sh
+pip install psycopg2
+```
+```sh
+pip install psycopg2-binary
+```
+
+Por fim, configure o Django para se conectar com o banco de dados. Por padrão, os projetos do Django utilizam o banco de dados **SQLite**, portanto, primeiramente, será necessário mudar as configuração presentes no arquivo `settings.py`, substituindo as configurações do banco SQLite pelo PostgreSQL.
+```bash
+DATABASES = {
+'default': {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': 'nome',  # O nome do banco de dados 
+    'USER': 'admin',  # O usuário master 
+    'PASSWORD': 'senha',  # A senha 
+    'HOST': 'endpoint',  # O endpoint do RDS
+    'PORT': '5432',  # A porta padrão do PostgreSQL
   }
-  ```
-    Depois disso, execute as migrações para criar as tabelas no banco de dados, e verifique se o Django conseguiu se conectar corretamente à ele.
-  ```bash
-  python manage.py migrate
-  ```
+}
+```
+Depois disso, execute as migrações para criar os modelos no banco de dados, e verifique se o Django conseguiu se conectar corretamente a ele.
+```bash
+python manage.py migrate
+```
 
-  ## EC2
+### EC2
+
+Com o banco de dados funcionando, podemos agora rodar o saphira no EC2.
+
+O **EC2** (Elastic Compute Cloud) é um **servidor virtual** na nuvem da AWS, que atua como um **computador remoto**. Então ao criar uma instância EC2, estaremos basicamente alugando um servidor na AWS, e é nesse servidor que o Saphira rodará e ficará acessível na internet.
+
+Dito isso, o primeiro passo é criar uma instância EC2 no AWS.
+- Siga os passos para sua criação
+- Guarde o **Key Pair** (par de chaves) e o arquivo `.pem` gerado, pois permitirá que você acesse a instância via SSH.
+- Certifique-se de que sua instância EC2 está na mesma **VPC (Virtual Private Cloud)** que o RDS.
+- Confira o Security Group:
+    - Permitir tráfego SSH e TCP nas regras de entrada.
+    - Verificar se a instância EC2 pode acessar a porta do PostgreSQL (`5432`) no RDS.
+
+Com o EC2 criado, o segundo passo é se conectar a ele. Para isso, siga os passos de conexão via `SSH` fornecidos no próprio AWS 
+
+Se tudo der certo, agora você estará operando no computador remoto.
+
+Então o próximo passo será configurar esse ambiente na linha de comando do servidor EC2. Como fornecido em [Configuração](#Configuração): 
+
+- Baixe as dependências, como o python, o pip e o venv;
+- Ative o venv
+- Clone o repositório do Git
+- Instale os requerimentos e o `psycopg2`
+
+Por fim, vale a pena verificar as configurações do Django presentes no EC2, especialmente no arquivo `settings.py` que deve ter as informações corretas sobre o banco de dados RDS.
+
+Rode o Saphira com o comando:
+
+```bash
+python manage.py runserver 0.0.0.0:8000
+```
+
+Agora, a aplicação estará acessível na internet através do IP público da instância EC2 na porta 8000.
