@@ -224,10 +224,30 @@ A API pode ser acessada localmente em `http://localhost:8000/`. Utilize ferramen
 
 ## Testes
 
-Os testes em Django são realizados por meio da classe TestCase, importada do django.test que permite a realização de testes em ambiente isolado.
+Os testes em Django são realizados por meio da classe *TestCase*, importada do *django.test* que permite a realização de testes em ambiente isolado.
 
-- `setUP`
-  - **Descrição**: Cria instância de teste
+- **Executar todos os testes**:
+
+  ```bash
+  python3 manage.py test testes
+  ```
+
+- **Executar teste específico**:
+  ```bash
+  python3 manage.py test testes.[nome_do_teste]
+  ```
+
+- **Estrutura do Teste**:
+  - `setUP`
+    - **Descrição**: Usado para inicializar objetos, criar dados de teste ou qualquer outra preparação necessária.
+  
+  -`Assertions`
+    - **Descrição**: Classe de *TesteCase* que oferece métodos usados para verificar se as saídas e estados do código são os esperados
+    - **Exemplos de Assertions**:
+      - `assertEqual`
+      - `assertTrue`
+      - `assertFalse`
+  
 
 ### Administrador
 
