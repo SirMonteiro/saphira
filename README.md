@@ -9,6 +9,7 @@ Bem-vindo ao projeto **Saphira API**, uma API desenvolvida com Django Rest Frame
 - [Configuração](#configuração)
 - [Uso](#uso)
 - [Endpoints](#endpoints)
+- [Testes](#testes)
 
 ## Recursos
 
@@ -220,3 +221,42 @@ A API pode ser acessada localmente em `http://localhost:8000/`. Utilize ferramen
 
 - `DELETE /admin/presence/{talk_id}/{student_document}`
   - **Descrição**: Remove uma presença específica.
+
+## Testes
+
+Os testes em Django são realizados por meio da classe *TestCase*, importada do *django.test* que permite a realização de testes em ambiente isolado.
+
+- **Executar todos os testes**:
+
+  ```bash
+  python3 manage.py test testes
+  ```
+
+- **Executar teste específico**:
+  ```bash
+  python3 manage.py test testes.[nome_do_teste]
+  ```
+
+- **Estrutura do Teste**:
+  - `setUP`
+    - **Descrição**: Usado para inicializar objetos, criar dados de teste ou qualquer outra preparação necessária.
+  
+  -`Assertions`
+    - **Descrição**: Classe de *TesteCase* que oferece métodos usados para verificar se as saídas e estados do código são os esperados
+    - **Exemplos de Assertions**:
+      - `assertEqual`
+      - `assertTrue`
+      - `assertFalse`
+  
+
+### Administrador
+
+- `AdminLoginViewTest`
+  - **Descrição**: Testa url de AdminLoginView
+
+  - `test_login_admin_success`
+    - **Descrição**: Verifica se login foi bem-sucedido
+
+  - `test_login_admin_failure`
+    - **Descrição**: Verifica se login falhou
+
