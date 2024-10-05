@@ -246,7 +246,7 @@ class AdminListStudentsByNameView(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         name = self.kwargs.get('name')
-        students = Student.objects.filter(name__icontains=name).values('id', 'name', 'code')
+        students = Student.objects.filter(name__icontains=name).values('id', 'name', 'code', 'email')
         return Response(list(students))
 
 @method_decorator(admin_auth_required, name='dispatch')

@@ -307,3 +307,32 @@ python manage.py runserver 0.0.0.0:8000
 ```
 
 Agora, a aplicação estará acessível na internet através do IP público da instância EC2 na porta 8000.
+
+
+### Load Balancer
+
+O **Load Balancer** distribui o tráfego de entrada em várias instâncias do EC2 para equilibrar a demanda, garantindo uma melhor disponibilidade da aplicação. No entanto, será utilizado principalmente para testar as requisições HTTPS
+
+A criação do load balancer pode ser encontrada na própria interface do EC2. 
+
+- Em **"Create Load Balancer"**, será escolhido o **Application Load Balancer (ALB}** como o tipo de Load Balancer
+- Escolha um nome, um Scheme, algumas Subnets, e o mesmo VPC onde o EC2 e o RDS estão
+- Configure o Security Group para permitir o tráfego HTTP e HTTPS
+- Crie um Certificado SSL/TLS no serviço **AWS Certificate Manager (ACM)**
+- Adicione um **Listener** para HTTPS e associe o certificado SSL.
+- Crie um Target Group:
+    - Tipo: `Instances`.
+    - Protocolo: `HTTP`.
+    - Porta: `8000` (porta onde a aplicação Django está rodando no EC2).
+- Adicione e associe o Target Group
+    - Selecione as instâncias EC2 que devem receber tráfego do Load Balancer e registre-os.
+    - No painel de configuração do Load Balancer, na seção de **Listeners**, adicione uma regra que encaminha todas as requisições para o Target Group em **"View/Edit rules" do HTTPS**
+    
+
+Agora é possível testar as requisições HTTPS. Basta obter o DNS público do Load Balancer e abrí-lo no navegador com  `https://` . Se tudo estiver configurado corretamente, a aplicação Django estará rodando via HTTPS.
+> [!NOTE]
+> Certifique-se de que o Django está configurado corretamente para usar HTTPS. No arquivo `settings.py`, adicione, se não tiver:
+> ```python
+> SECURE_SSL_REDIRECT = True  # Redireciona todas as requisições HTTP para HTTPS
+> CSRF_COOKIE_SECURE = True   # Utiliza cookies para CSRF
+> ```
