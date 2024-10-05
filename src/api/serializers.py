@@ -68,7 +68,7 @@ class CreatePresenceSerializer(serializers.ModelSerializer):
 
         student = Student.objects.filter(
             models.Q(email=student_document) | 
-            models.Q(code=student_document) | 
+            models.Q(code=student_document.upper()) | 
             models.Q(usp_number=student_document)
         ).first()
 
