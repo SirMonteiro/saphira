@@ -256,7 +256,7 @@ class AdminRetrieveStudentInfoView(generics.RetrieveAPIView):
 
         student = Student.objects.filter(
             models.Q(email=student_document) | 
-            models.Q(code=student_document) | 
+            models.Q(code=student_document.upper()) | 
             models.Q(usp_number=student_document)
         ).first()
 
@@ -374,7 +374,7 @@ class AdminDestroyPresenceView(generics.DestroyAPIView):
 
         student = Student.objects.filter(
             models.Q(email=student_document) | 
-            models.Q(code=student_document) | 
+            models.Q(code=student_document.upper()) | 
             models.Q(usp_number=student_document)
         ).first()
 
