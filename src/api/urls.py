@@ -23,7 +23,7 @@ urlpatterns = [
     path('student/<uuid:student_id>/presences', RetrieveStudentPresencesView.as_view(), name='retrieve-student-presences'),
 
     # Admin endpoints
-    path('admin', views.admin_index, name='admin-login-test'),
+    path('admin', public.admin_index, name='admin-login-test'),
     path('admin/students', AdminListStudentsView.as_view(), name='admin-list-students'),
     path('admin/students/search/<name>', AdminListStudentsByNameView.as_view(), name='admin-list-students-by-name'),
     path('admin/student/<student_document>', AdminRetrieveStudentInfoView.as_view(), name='admin-retrieve-student-info'),

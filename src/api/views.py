@@ -21,9 +21,6 @@ from .utils import *
 ############################################################################################################
 #                                             PUBLIC VIEWS
 ############################################################################################################
-@api_view(['GET'])
-def index(request):
-    return Response({"message": "Bem-vinde à API Saphira!"}, status=status.HTTP_200_OK)
 
 class AdminLoginView(APIView):
     serializer_class = AdminSerializer
@@ -227,11 +224,6 @@ class RetrieveStudentPresencesView(generics.ListAPIView):
 ############################################################################################################
 #                                               ADMIN VIEWS
 ############################################################################################################
-@api_view(['GET'])
-@admin_auth_required
-def admin_index(request):
-    return Response({"message": "Credenciais incorretas!! Brincadeirinha...o login deu bom =)"}, status=200)
-
 @method_decorator(admin_auth_required, name='dispatch')
 class AdminListStudentsView(generics.ListAPIView):
     queryset = Student.objects.all()
