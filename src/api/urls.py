@@ -9,9 +9,9 @@ from .views import *
 register_converter(UUIDConverter, 'uuid')
 
 urlpatterns = [
-    # Public endpoints
+    # Public
     path('', public.index, name='index'),
-    path('admin/login', AdminLoginView.as_view(), name='admin-login'),
+    path('admin/login', public.AdminLogin.as_view(), name='admin-login'),
     path('admin/logout', AdminLogoutView.as_view(), name='admin-logout'),
 
     # Firebase endpoints (student)

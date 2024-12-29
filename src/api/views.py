@@ -22,21 +22,6 @@ from .utils import *
 #                                             PUBLIC VIEWS
 ############################################################################################################
 
-class AdminLoginView(APIView):
-    serializer_class = AdminSerializer
-
-    def post(self, request, *args, **kwargs):
-        username = request.data.get('username')
-        password = request.data.get('password')
-
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            login(request, user)
-
-            return Response({'detail': 'Logado como admin...utilize seus poderes com moderação ;)'}, status=status.HTTP_200_OK)
-        else:
-            return Response({'detail': 'Você não é da CO-SSI...'}, status=status.HTTP_401_UNAUTHORIZED)
-
 class AdminLogoutView(APIView):
     serializer_class = EmptySerializer
 
