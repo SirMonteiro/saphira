@@ -21,24 +21,6 @@ from .utils import *
 ############################################################################################################
 #                                             PUBLIC VIEWS
 ############################################################################################################
-@api_view(['GET'])
-def index(request):
-    return Response({"message": "Bem-vinde à API Saphira!"}, status=status.HTTP_200_OK)
-
-class AdminLoginView(APIView):
-    serializer_class = AdminSerializer
-
-    def post(self, request, *args, **kwargs):
-        username = request.data.get('username')
-        password = request.data.get('password')
-
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            login(request, user)
-
-            return Response({'detail': 'Logado como admin...utilize seus poderes com moderação ;)'}, status=status.HTTP_200_OK)
-        else:
-            return Response({'detail': 'Você não é da CO-SSI...'}, status=status.HTTP_401_UNAUTHORIZED)
 
 class AdminLogoutView(APIView):
     serializer_class = EmptySerializer
@@ -227,11 +209,6 @@ class RetrieveStudentPresencesView(generics.ListAPIView):
 ############################################################################################################
 #                                               ADMIN VIEWS
 ############################################################################################################
-@api_view(['GET'])
-@admin_auth_required
-def admin_index(request):
-    return Response({"message": "Credenciais incorretas!! Brincadeirinha...o login deu bom =)"}, status=200)
-
 @method_decorator(admin_auth_required, name='dispatch')
 class AdminListStudentsView(generics.ListAPIView):
     queryset = Student.objects.all()

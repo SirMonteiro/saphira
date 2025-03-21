@@ -1,6 +1,7 @@
 from django.urls import path, register_converter
 
 from api import views
+from api.services import public
 from api.utils import UUIDConverter
 
 from .views import *
@@ -8,9 +9,9 @@ from .views import *
 register_converter(UUIDConverter, 'uuid')
 
 urlpatterns = [
-    # Public endpoints
-    path('', views.index, name='index'),
-    path('admin/login', AdminLoginView.as_view(), name='admin-login'),
+    # Public
+    path('', public.index, name='index'),
+    path('admin/login', public.AdminLogin.as_view(), name='admin-login'),
     path('admin/logout', AdminLogoutView.as_view(), name='admin-logout'),
 
     # Firebase endpoints (student)
@@ -22,7 +23,7 @@ urlpatterns = [
     path('student/<uuid:student_id>/presences', RetrieveStudentPresencesView.as_view(), name='retrieve-student-presences'),
 
     # Admin endpoints
-    path('admin', views.admin_index, name='admin-login-test'),
+    path('admin', public.admin_index, name='admin-login-test'),
     path('admin/students', AdminListStudentsView.as_view(), name='admin-list-students'),
     path('admin/students/search/<name>', AdminListStudentsByNameView.as_view(), name='admin-list-students-by-name'),
     path('admin/student/<student_document>', AdminRetrieveStudentInfoView.as_view(), name='admin-retrieve-student-info'),
@@ -34,7 +35,4 @@ urlpatterns = [
     path('admin/presence/<talk_id>/<student_document>', AdminDestroyPresenceView.as_view(), name='admin-destroy-presence'),
     path('admin/<talk_id>/in-person-draw', AdminInPersonDrawOnTalkView.as_view(), name='admin-in-person-draw-on-talk'),
     path('admin/<talk_id>/draw', AdminDrawOnTalkView.as_view(), name='admin-draw-on-talk'),
-
-    # path('admin/attendance-report', AdminAttendanceReportView.as_view(), name='admin-attendance-report'),
-    # TODO: fazer tudo relacionado aos brindes
 ]
