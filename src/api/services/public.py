@@ -1,9 +1,12 @@
-from rest_framework import status
+from django.contrib.auth import authenticate, login
+
+from rest_framework import status, generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.serializers import *
+from api.decorators import *
 
 @api_view(['GET'])
 def index(request):
@@ -11,6 +14,7 @@ def index(request):
 
 
 @api_view(['GET'])
+@admin_auth_required
 def admin_index(request):
     return Response({"message": "Credenciais incorretas!! Brincadeirinha... o login deu bom =)"}, status=200)
 
@@ -28,6 +32,6 @@ class AdminLogin(APIView):
 
             return Response({'detail': 'Logado como admin... utilize seus poderes com moderação ;)'}, status = status.HTTP_200_OK)
         else:
-            return Response({'detail': 'Você não é da CO-SSI...'}, status = status.HTTP_401_UNAUTHORIZADE)
+            return Response({'detail': 'Você não é da CO-SSI...'}, status = status.HTTP_401_UNAUTHORIZED)
 
 
