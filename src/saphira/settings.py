@@ -189,10 +189,14 @@ WSGI_APPLICATION = 'saphira.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+'default': {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': getenv('POSTGRES_DB'),
+    'USER': getenv('POSTGRES_USER'),
+    'PASSWORD': getenv('POSTGRES_PASSWORD'),
+    'HOST': getenv('POSTGRES_HOST'),
+    'PORT': getenv('POSTGRES_PORT'),
+  }
 }
 
 
@@ -231,6 +235,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

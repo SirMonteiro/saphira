@@ -1,0 +1,141 @@
+services:
+  db:
+    image: postgres:alpine
+    container_name: saphira-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    profiles:
+      - production
+      - dev
+    restart: unless-stopped
+
+  migrations:
+    build: .
+    container_name: saphira-migrations
+    user: root
+    command: >
+      sh -c "python manage.py makemigrations &&
+      python manage.py migrate --noinput &&
+      python manage.py collectstatic --noinput &&
+      python manage.py createsuperuser --noinput --username $DJANGO_SUPERUSER_USER --email $DJANGO_SUPERUSER_EMAIL"
+    volumes:
+      - static:/app/static
+    depends_on:
+      - db
+    environment:
+      SAPHIRA_ENV: ${SAPHIRA_ENV}
+      SAPHIRA_ALLOWED_HOSTS: ${SAPHIRA_ALLOWED_HOSTS}
+      SAPHIRA_JWT_SECRET_KEY: ${SAPHIRA_JWT_SECRET_KEY}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USER}
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
+      FIREBASE_TYPE: ${FIREBASE_TYPE}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID}
+      FIREBASE_PRIVATE_KEY_ID: ${FIREBASE_PRIVATE_KEY_ID}
+      FIREBASE_PRIVATE_KEY: ${FIREBASE_PRIVATE_KEY}
+      FIREBASE_CLIENT_EMAIL: ${FIREBASE_CLIENT_EMAIL}
+      FIREBASE_CLIENT_ID: ${FIREBASE_CLIENT_ID}
+      FIREBASE_AUTH_URI: ${FIREBASE_AUTH_URI}
+      FIREBASE_TOKEN_URI: ${FIREBASE_TOKEN_URI}
+      FIREBASE_AUTH_PROVIDER_X509_CERT_URL: ${FIREBASE_AUTH_PROVIDER_X509_CERT_URL}
+      FIREBASE_CLIENT_X509_CERT_URL: ${FIREBASE_CLIENT_X509_CERT_URL}
+      FIREBASE_UNIVERSE_DOMAIN: ${FIREBASE_UNIVERSE_DOMAIN}
+    profiles:
+      - dev
+      - production
+
+  saphira-dev:
+    build: .
+    container_name: saphira-dev
+    entrypoint: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - migrations
+    environment:
+      SAPHIRA_ENV: ${SAPHIRA_ENV}
+      SAPHIRA_ALLOWED_HOSTS: ${SAPHIRA_ALLOWED_HOSTS}
+      SAPHIRA_JWT_SECRET_KEY: ${SAPHIRA_JWT_SECRET_KEY}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      FIREBASE_TYPE: ${FIREBASE_TYPE}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID}
+      FIREBASE_PRIVATE_KEY_ID: ${FIREBASE_PRIVATE_KEY_ID}
+      FIREBASE_PRIVATE_KEY: ${FIREBASE_PRIVATE_KEY}
+      FIREBASE_CLIENT_EMAIL: ${FIREBASE_CLIENT_EMAIL}
+      FIREBASE_CLIENT_ID: ${FIREBASE_CLIENT_ID}
+      FIREBASE_AUTH_URI: ${FIREBASE_AUTH_URI}
+      FIREBASE_TOKEN_URI: ${FIREBASE_TOKEN_URI}
+      FIREBASE_AUTH_PROVIDER_X509_CERT_URL: ${FIREBASE_AUTH_PROVIDER_X509_CERT_URL}
+      FIREBASE_CLIENT_X509_CERT_URL: ${FIREBASE_CLIENT_X509_CERT_URL}
+      FIREBASE_UNIVERSE_DOMAIN: ${FIREBASE_UNIVERSE_DOMAIN}
+    env_file:
+      - .env
+    profiles:
+      - dev
+    restart: unless-stopped
+
+  saphira-prod:
+    build: .
+    container_name: saphira-production
+    depends_on:
+      - db
+      - migrations
+    environment:
+      SAPHIRA_ENV: ${SAPHIRA_ENV}
+      SAPHIRA_ALLOWED_HOSTS: ${SAPHIRA_ALLOWED_HOSTS}
+      SAPHIRA_JWT_SECRET_KEY: ${SAPHIRA_JWT_SECRET_KEY}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      FIREBASE_TYPE: ${FIREBASE_TYPE}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID}
+      FIREBASE_PRIVATE_KEY_ID: ${FIREBASE_PRIVATE_KEY_ID}
+      FIREBASE_PRIVATE_KEY: ${FIREBASE_PRIVATE_KEY}
+      FIREBASE_CLIENT_EMAIL: ${FIREBASE_CLIENT_EMAIL}
+      FIREBASE_CLIENT_ID: ${FIREBASE_CLIENT_ID}
+      FIREBASE_AUTH_URI: ${FIREBASE_AUTH_URI}
+      FIREBASE_TOKEN_URI: ${FIREBASE_TOKEN_URI}
+      FIREBASE_AUTH_PROVIDER_X509_CERT_URL: ${FIREBASE_AUTH_PROVIDER_X509_CERT_URL}
+      FIREBASE_CLIENT_X509_CERT_URL: ${FIREBASE_CLIENT_X509_CERT_URL}
+      FIREBASE_UNIVERSE_DOMAIN: ${FIREBASE_UNIVERSE_DOMAIN}
+    env_file:
+      - .env
+    profiles:
+      - production
+    restart: unless-stopped
+  saphira-web:
+    image: nginx:stable-alpine
+    container_name: saphira-web
+    ports:
+      - "80:80"
+    volumes:
+      - static:/static:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    profiles:
+      - production
+    depends_on:
+      - saphira-prod
+    restart: unless-stopped
+volumes:
+  static:
+  postgres_data:
