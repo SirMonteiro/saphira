@@ -253,9 +253,9 @@ class AdminRetrieveStudentInfoView(generics.RetrieveAPIView):
         student_document = self.kwargs.get('student_document')
 
         student = Student.objects.filter(
-            models.Q(email=student_document) |
-            models.Q(code=student_document.upper()) |
-            models.Q(usp_number=student_document)
+          models.Q(email=student_document) | 
+          models.Q(code=student_document.upper()) | 
+          models.Q(usp_number=student_document)
         ).first()
 
         if not student:
